@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package gfs;
+
+// The chunk server
+service ChunkServer {
+  rpc Add (AddRequest) returns (String);
+  rpc Read (ReadRequest) returns (Bytes);
+  rpc Copy (CopyRequest) returns (Bool);
+  rpc GetChunks (Empty) returns (StringList);
+}
+
+// master server
+service MasterServer {
+  rpc RegisterPeer (RegisterRequest) returns (Empty);
+  rpc CheckChunks (Empty) returns (Empty);
+  rpc GetFile (String) returns (StringList);
+  rpc GetPeers (Empty) returns (StringList);
+  rpc FindLocation (String) returns (StringList);
+  rpc NameSpace (NameRequest) returns (Empty);
+}
+  
+// The request message containing file name, data and chunk information.
+message AddRequest {
+  string name = 1;
+  bytes data = 2;
+  repeated string peers = 3;
+}
+
+// The request message containing block uuid.
+message ReadRequest {
+  string cid = 1;
+}
+
+// The request message containing block uuid and data.
+message CopyRequest {
+  string cid = 1;
+  bytes data = 2;
+}
+
+message RegisterRequest {
+  string id = 1;
+  string ip = 2;
+}
+
+message NameRequest {
+  string name = 1;
+  repeated string cid = 2;
+}
+ 
+message StringList {
+  repeated string strs = 1;
+}
+
+message Bytes {
+  bytes data = 1;
+}
+
+message String {
+  string str = 1;
+}
+
+message Bool {
+  bool verify = 1;
+}
+
+message Empty {
+}
+
