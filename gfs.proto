@@ -5,8 +5,9 @@ package gfs;
 // The chunk server
 service ChunkServer {
   rpc Add (AddRequest) returns (String);
-  rpc Read (ReadRequest) returns (Bytes);
+  rpc Read (ChunkId) returns (Bytes);
   rpc Copy (CopyRequest) returns (Bool);
+  rpc Delete (ChunkId) returns (Empty);
   rpc GetChunks (Empty) returns (StringList);
 }
 
@@ -15,8 +16,9 @@ service MasterServer {
   rpc RegisterPeer (RegisterRequest) returns (Empty);
   rpc CheckChunks (Empty) returns (Empty);
   rpc GetFile (String) returns (StringList);
+  rpc DeleteFile (String) returns (Empty);
   rpc GetPeers (Empty) returns (StringList);
-  rpc FindLocation (String) returns (StringList);
+  rpc GetLocation (String) returns (StringList);
   rpc NameSpace (NameRequest) returns (Empty);
 }
   
@@ -28,7 +30,7 @@ message AddRequest {
 }
 
 // The request message containing block uuid.
-message ReadRequest {
+message ChunkId {
   string cid = 1;
 }
 

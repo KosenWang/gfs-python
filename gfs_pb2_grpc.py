@@ -22,13 +22,18 @@ class ChunkServerStub(object):
                 )
         self.Read = channel.unary_unary(
                 '/gfs.ChunkServer/Read',
-                request_serializer=gfs__pb2.ReadRequest.SerializeToString,
+                request_serializer=gfs__pb2.ChunkId.SerializeToString,
                 response_deserializer=gfs__pb2.Bytes.FromString,
                 )
         self.Copy = channel.unary_unary(
                 '/gfs.ChunkServer/Copy',
                 request_serializer=gfs__pb2.CopyRequest.SerializeToString,
                 response_deserializer=gfs__pb2.Bool.FromString,
+                )
+        self.Delete = channel.unary_unary(
+                '/gfs.ChunkServer/Delete',
+                request_serializer=gfs__pb2.ChunkId.SerializeToString,
+                response_deserializer=gfs__pb2.Empty.FromString,
                 )
         self.GetChunks = channel.unary_unary(
                 '/gfs.ChunkServer/GetChunks',
@@ -59,6 +64,12 @@ class ChunkServerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Delete(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetChunks(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -75,13 +86,18 @@ def add_ChunkServerServicer_to_server(servicer, server):
             ),
             'Read': grpc.unary_unary_rpc_method_handler(
                     servicer.Read,
-                    request_deserializer=gfs__pb2.ReadRequest.FromString,
+                    request_deserializer=gfs__pb2.ChunkId.FromString,
                     response_serializer=gfs__pb2.Bytes.SerializeToString,
             ),
             'Copy': grpc.unary_unary_rpc_method_handler(
                     servicer.Copy,
                     request_deserializer=gfs__pb2.CopyRequest.FromString,
                     response_serializer=gfs__pb2.Bool.SerializeToString,
+            ),
+            'Delete': grpc.unary_unary_rpc_method_handler(
+                    servicer.Delete,
+                    request_deserializer=gfs__pb2.ChunkId.FromString,
+                    response_serializer=gfs__pb2.Empty.SerializeToString,
             ),
             'GetChunks': grpc.unary_unary_rpc_method_handler(
                     servicer.GetChunks,
@@ -128,7 +144,7 @@ class ChunkServer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/gfs.ChunkServer/Read',
-            gfs__pb2.ReadRequest.SerializeToString,
+            gfs__pb2.ChunkId.SerializeToString,
             gfs__pb2.Bytes.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -147,6 +163,23 @@ class ChunkServer(object):
         return grpc.experimental.unary_unary(request, target, '/gfs.ChunkServer/Copy',
             gfs__pb2.CopyRequest.SerializeToString,
             gfs__pb2.Bool.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Delete(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/gfs.ChunkServer/Delete',
+            gfs__pb2.ChunkId.SerializeToString,
+            gfs__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -193,13 +226,18 @@ class MasterServerStub(object):
                 request_serializer=gfs__pb2.String.SerializeToString,
                 response_deserializer=gfs__pb2.StringList.FromString,
                 )
+        self.DeleteFile = channel.unary_unary(
+                '/gfs.MasterServer/DeleteFile',
+                request_serializer=gfs__pb2.String.SerializeToString,
+                response_deserializer=gfs__pb2.Empty.FromString,
+                )
         self.GetPeers = channel.unary_unary(
                 '/gfs.MasterServer/GetPeers',
                 request_serializer=gfs__pb2.Empty.SerializeToString,
                 response_deserializer=gfs__pb2.StringList.FromString,
                 )
-        self.FindLocation = channel.unary_unary(
-                '/gfs.MasterServer/FindLocation',
+        self.GetLocation = channel.unary_unary(
+                '/gfs.MasterServer/GetLocation',
                 request_serializer=gfs__pb2.String.SerializeToString,
                 response_deserializer=gfs__pb2.StringList.FromString,
                 )
@@ -232,13 +270,19 @@ class MasterServerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def DeleteFile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetPeers(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def FindLocation(self, request, context):
+    def GetLocation(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -268,13 +312,18 @@ def add_MasterServerServicer_to_server(servicer, server):
                     request_deserializer=gfs__pb2.String.FromString,
                     response_serializer=gfs__pb2.StringList.SerializeToString,
             ),
+            'DeleteFile': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteFile,
+                    request_deserializer=gfs__pb2.String.FromString,
+                    response_serializer=gfs__pb2.Empty.SerializeToString,
+            ),
             'GetPeers': grpc.unary_unary_rpc_method_handler(
                     servicer.GetPeers,
                     request_deserializer=gfs__pb2.Empty.FromString,
                     response_serializer=gfs__pb2.StringList.SerializeToString,
             ),
-            'FindLocation': grpc.unary_unary_rpc_method_handler(
-                    servicer.FindLocation,
+            'GetLocation': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetLocation,
                     request_deserializer=gfs__pb2.String.FromString,
                     response_serializer=gfs__pb2.StringList.SerializeToString,
             ),
@@ -346,6 +395,23 @@ class MasterServer(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
+    def DeleteFile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/gfs.MasterServer/DeleteFile',
+            gfs__pb2.String.SerializeToString,
+            gfs__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
     def GetPeers(request,
             target,
             options=(),
@@ -363,7 +429,7 @@ class MasterServer(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def FindLocation(request,
+    def GetLocation(request,
             target,
             options=(),
             channel_credentials=None,
@@ -373,7 +439,7 @@ class MasterServer(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/gfs.MasterServer/FindLocation',
+        return grpc.experimental.unary_unary(request, target, '/gfs.MasterServer/GetLocation',
             gfs__pb2.String.SerializeToString,
             gfs__pb2.StringList.FromString,
             options, channel_credentials,

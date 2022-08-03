@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import hashlib
 
 import grpc
@@ -9,16 +10,21 @@ from concurrent import futures
 
 
 PATH = os.path.join('data', sys.argv[2])
-
+localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
 class ChunkServer(pb2_grpc.ChunkServerServicer):
     
     def __init__(self) -> None:
         self.datastore = set()
         ls = os.listdir(PATH)
-        for chunk in ls:
-            self.datastore.add(chunk)
+        for cid in ls:
+            self.datastore.add(cid)
+        print(localtime, "Synced datastore.")
+        print()
+        print("--------------------Current Datastore--------------------")
         print(self.datastore)
+        print("---------------------------------------------------------")
+        print()
         self.register_to_master()
 
 
@@ -26,7 +32,7 @@ class ChunkServer(pb2_grpc.ChunkServerServicer):
         chunks = []
         consist = True
         data = request.data
-        name = request.name
+        filename = request.name
         peers = request.peers
         size = len(data)//2 + 1
 
@@ -45,9 +51,14 @@ class ChunkServer(pb2_grpc.ChunkServerServicer):
             data = data[size:]
 
         if consist:
+            print(localtime, f"Added {filename} to datastore.")
+            print()
+            print("--------------------Current Datastore--------------------")
             print(self.datastore)
-            self.add_file_to_master(name, chunks)
-            return pb2.String(str=str({name: chunks}))
+            print("---------------------------------------------------------")
+            print()
+            self.add_file_to_master(filename, chunks)
+            return pb2.String(str=str({filename: chunks}))
         else:
             return pb2.String(str="Add file failed. Try again!")
         
@@ -59,7 +70,12 @@ class ChunkServer(pb2_grpc.ChunkServerServicer):
         if cid == self.get_cid(data):
             self.write(cid, data)
             self.datastore.add(cid)
+            print(localtime, f"Back up chunk {cid} successfully.")
+            print()
+            print("--------------------Current Datastore--------------------")
             print(self.datastore)
+            print("---------------------------------------------------------")
+            print()
             status = True
         return pb2.Bool(verify=status)
 
@@ -69,6 +85,20 @@ class ChunkServer(pb2_grpc.ChunkServerServicer):
             data = f.read()
         return pb2.Bytes(data=data)
     
+
+    def Delete(self, request, context):
+        cid = request.cid
+        data_dir = os.path.join(PATH, cid)
+        os.remove(data_dir)
+        self.datastore.remove(cid)
+        print(localtime, f"Deleted chunk {cid} successfully.")
+        print()
+        print("--------------------Current Datastore--------------------")
+        print(self.datastore)
+        print("---------------------------------------------------------")
+        print()
+        return pb2.Empty()
+
 
     def GetChunks(self, request, context):
         chunks = []
