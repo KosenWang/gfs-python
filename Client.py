@@ -6,7 +6,7 @@ import gfs_pb2_grpc as pb2_grpc
 
 def add_file(filename:str):
     peers = _get_peers()
-    data_dir = os.path.join('data', 'client', 'hello.txt')
+    data_dir = os.path.join('data', 'client', filename)
     with open(data_dir, 'rb') as f:
         data = f.read()
     with grpc.insecure_channel(peers[0]) as channel:
@@ -17,9 +17,10 @@ def add_file(filename:str):
 
 def read_file(filename:str):
     chunks = _get_file(filename)
+    print(chunks)
     data = bytes()
     for cid in chunks:
-        peers = _get_location(cid)
+        peers = chunks[cid].strs 
         with grpc.insecure_channel(peers[0]) as channel:
             stub = pb2_grpc.ChunkServerStub(channel)
             chunk = stub.Read(pb2.ChunkId(cid=cid))
@@ -35,21 +36,16 @@ def delete_file(filename:str):
 
 
 def _get_file(filename:str):
+    # get the chunk arrays connected with the filename
     with grpc.insecure_channel('localhost:8080') as channel:
         stub = pb2_grpc.MasterServerStub(channel)
         stub.CheckChunks(pb2.Empty())
         response = stub.GetFile(pb2.String(str=filename))
-    return response.strs
-
-
-def _get_location(cid:str):
-    with grpc.insecure_channel('localhost:8080') as channel:
-        stub = pb2_grpc.MasterServerStub(channel)
-        response = stub.GetLocation(pb2.String(str=cid))
-    return response.strs
+    return response.map
 
 
 def _get_peers():
+    # get the ip address of peers which are ready for add file and backup
     with grpc.insecure_channel('localhost:8080') as channel:
         stub = pb2_grpc.MasterServerStub(channel)
         stub.CheckChunks(pb2.Empty())

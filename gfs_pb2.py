@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\tgfs.proto\x12\x03gfs\"7\n\nAddRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\x12\r\n\x05peers\x18\x03 \x03(\t\"\x16\n\x07\x43hunkId\x12\x0b\n\x03\x63id\x18\x01 \x01(\t\"(\n\x0b\x43opyRequest\x12\x0b\n\x03\x63id\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\")\n\x0fRegisterRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\"(\n\x0bNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0b\n\x03\x63id\x18\x02 \x03(\t\"\x1a\n\nStringList\x12\x0c\n\x04strs\x18\x01 \x03(\t\"\x15\n\x05\x42ytes\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\"\x15\n\x06String\x12\x0b\n\x03str\x18\x01 \x01(\t\"\x16\n\x04\x42ool\x12\x0e\n\x06verify\x18\x01 \x01(\x08\"\x07\n\x05\x45mpty2\xc7\x01\n\x0b\x43hunkServer\x12#\n\x03\x41\x64\x64\x12\x0f.gfs.AddRequest\x1a\x0b.gfs.String\x12 \n\x04Read\x12\x0c.gfs.ChunkId\x1a\n.gfs.Bytes\x12#\n\x04\x43opy\x12\x10.gfs.CopyRequest\x1a\t.gfs.Bool\x12\"\n\x06\x44\x65lete\x12\x0c.gfs.ChunkId\x1a\n.gfs.Empty\x12(\n\tGetChunks\x12\n.gfs.Empty\x1a\x0f.gfs.StringList2\xb8\x02\n\x0cMasterServer\x12\x30\n\x0cRegisterPeer\x12\x14.gfs.RegisterRequest\x1a\n.gfs.Empty\x12%\n\x0b\x43heckChunks\x12\n.gfs.Empty\x1a\n.gfs.Empty\x12\'\n\x07GetFile\x12\x0b.gfs.String\x1a\x0f.gfs.StringList\x12%\n\nDeleteFile\x12\x0b.gfs.String\x1a\n.gfs.Empty\x12\'\n\x08GetPeers\x12\n.gfs.Empty\x1a\x0f.gfs.StringList\x12+\n\x0bGetLocation\x12\x0b.gfs.String\x1a\x0f.gfs.StringList\x12)\n\tNameSpace\x12\x10.gfs.NameRequest\x1a\n.gfs.Emptyb\x06proto3'
+  serialized_pb=b'\n\tgfs.proto\x12\x03gfs\"7\n\nAddRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\x12\r\n\x05peers\x18\x03 \x03(\t\"\x16\n\x07\x43hunkId\x12\x0b\n\x03\x63id\x18\x01 \x01(\t\"(\n\x0b\x43opyRequest\x12\x0b\n\x03\x63id\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\x0c\")\n\x0fRegisterRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\n\n\x02ip\x18\x02 \x01(\t\"(\n\x0bNameRequest\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0b\n\x03\x63id\x18\x02 \x03(\t\"n\n\tChunkList\x12$\n\x03map\x18\x01 \x03(\x0b\x32\x17.gfs.ChunkList.MapEntry\x1a;\n\x08MapEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\x1e\n\x05value\x18\x02 \x01(\x0b\x32\x0f.gfs.StringList:\x02\x38\x01\"\x1a\n\nStringList\x12\x0c\n\x04strs\x18\x01 \x03(\t\"\x15\n\x05\x42ytes\x12\x0c\n\x04\x64\x61ta\x18\x01 \x01(\x0c\"\x15\n\x06String\x12\x0b\n\x03str\x18\x01 \x01(\t\"\x16\n\x04\x42ool\x12\x0e\n\x06verify\x18\x01 \x01(\x08\"\x07\n\x05\x45mpty2\xc7\x01\n\x0b\x43hunkServer\x12#\n\x03\x41\x64\x64\x12\x0f.gfs.AddRequest\x1a\x0b.gfs.String\x12 \n\x04Read\x12\x0c.gfs.ChunkId\x1a\n.gfs.Bytes\x12#\n\x04\x43opy\x12\x10.gfs.CopyRequest\x1a\t.gfs.Bool\x12\"\n\x06\x44\x65lete\x12\x0c.gfs.ChunkId\x1a\n.gfs.Empty\x12(\n\tGetChunks\x12\n.gfs.Empty\x1a\x0f.gfs.StringList2\xb7\x02\n\x0cMasterServer\x12\x30\n\x0cRegisterPeer\x12\x14.gfs.RegisterRequest\x1a\n.gfs.Empty\x12%\n\x0b\x43heckChunks\x12\n.gfs.Empty\x1a\n.gfs.Empty\x12&\n\x07GetFile\x12\x0b.gfs.String\x1a\x0e.gfs.ChunkList\x12%\n\nDeleteFile\x12\x0b.gfs.String\x1a\n.gfs.Empty\x12\'\n\x08GetPeers\x12\n.gfs.Empty\x1a\x0f.gfs.StringList\x12+\n\x0bGetLocation\x12\x0b.gfs.String\x1a\x0f.gfs.StringList\x12)\n\tNameSpace\x12\x10.gfs.NameRequest\x1a\n.gfs.Emptyb\x06proto3'
 )
 
 
@@ -220,6 +220,76 @@ _NAMEREQUEST = _descriptor.Descriptor(
 )
 
 
+_CHUNKLIST_MAPENTRY = _descriptor.Descriptor(
+  name='MapEntry',
+  full_name='gfs.ChunkList.MapEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='gfs.ChunkList.MapEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='gfs.ChunkList.MapEntry.value', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=b'8\001',
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=277,
+  serialized_end=336,
+)
+
+_CHUNKLIST = _descriptor.Descriptor(
+  name='ChunkList',
+  full_name='gfs.ChunkList',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='map', full_name='gfs.ChunkList.map', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[_CHUNKLIST_MAPENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=226,
+  serialized_end=336,
+)
+
+
 _STRINGLIST = _descriptor.Descriptor(
   name='StringList',
   full_name='gfs.StringList',
@@ -247,8 +317,8 @@ _STRINGLIST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=226,
-  serialized_end=252,
+  serialized_start=338,
+  serialized_end=364,
 )
 
 
@@ -279,8 +349,8 @@ _BYTES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=254,
-  serialized_end=275,
+  serialized_start=366,
+  serialized_end=387,
 )
 
 
@@ -311,8 +381,8 @@ _STRING = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=277,
-  serialized_end=298,
+  serialized_start=389,
+  serialized_end=410,
 )
 
 
@@ -343,8 +413,8 @@ _BOOL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=300,
-  serialized_end=322,
+  serialized_start=412,
+  serialized_end=434,
 )
 
 
@@ -368,15 +438,19 @@ _EMPTY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=324,
-  serialized_end=331,
+  serialized_start=436,
+  serialized_end=443,
 )
 
+_CHUNKLIST_MAPENTRY.fields_by_name['value'].message_type = _STRINGLIST
+_CHUNKLIST_MAPENTRY.containing_type = _CHUNKLIST
+_CHUNKLIST.fields_by_name['map'].message_type = _CHUNKLIST_MAPENTRY
 DESCRIPTOR.message_types_by_name['AddRequest'] = _ADDREQUEST
 DESCRIPTOR.message_types_by_name['ChunkId'] = _CHUNKID
 DESCRIPTOR.message_types_by_name['CopyRequest'] = _COPYREQUEST
 DESCRIPTOR.message_types_by_name['RegisterRequest'] = _REGISTERREQUEST
 DESCRIPTOR.message_types_by_name['NameRequest'] = _NAMEREQUEST
+DESCRIPTOR.message_types_by_name['ChunkList'] = _CHUNKLIST
 DESCRIPTOR.message_types_by_name['StringList'] = _STRINGLIST
 DESCRIPTOR.message_types_by_name['Bytes'] = _BYTES
 DESCRIPTOR.message_types_by_name['String'] = _STRING
@@ -419,6 +493,21 @@ NameRequest = _reflection.GeneratedProtocolMessageType('NameRequest', (_message.
   })
 _sym_db.RegisterMessage(NameRequest)
 
+ChunkList = _reflection.GeneratedProtocolMessageType('ChunkList', (_message.Message,), {
+
+  'MapEntry' : _reflection.GeneratedProtocolMessageType('MapEntry', (_message.Message,), {
+    'DESCRIPTOR' : _CHUNKLIST_MAPENTRY,
+    '__module__' : 'gfs_pb2'
+    # @@protoc_insertion_point(class_scope:gfs.ChunkList.MapEntry)
+    })
+  ,
+  'DESCRIPTOR' : _CHUNKLIST,
+  '__module__' : 'gfs_pb2'
+  # @@protoc_insertion_point(class_scope:gfs.ChunkList)
+  })
+_sym_db.RegisterMessage(ChunkList)
+_sym_db.RegisterMessage(ChunkList.MapEntry)
+
 StringList = _reflection.GeneratedProtocolMessageType('StringList', (_message.Message,), {
   'DESCRIPTOR' : _STRINGLIST,
   '__module__' : 'gfs_pb2'
@@ -455,6 +544,7 @@ Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), {
 _sym_db.RegisterMessage(Empty)
 
 
+_CHUNKLIST_MAPENTRY._options = None
 
 _CHUNKSERVER = _descriptor.ServiceDescriptor(
   name='ChunkServer',
@@ -463,8 +553,8 @@ _CHUNKSERVER = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=334,
-  serialized_end=533,
+  serialized_start=446,
+  serialized_end=645,
   methods=[
   _descriptor.MethodDescriptor(
     name='Add',
@@ -529,8 +619,8 @@ _MASTERSERVER = _descriptor.ServiceDescriptor(
   index=1,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=536,
-  serialized_end=848,
+  serialized_start=648,
+  serialized_end=959,
   methods=[
   _descriptor.MethodDescriptor(
     name='RegisterPeer',
@@ -558,7 +648,7 @@ _MASTERSERVER = _descriptor.ServiceDescriptor(
     index=2,
     containing_service=None,
     input_type=_STRING,
-    output_type=_STRINGLIST,
+    output_type=_CHUNKLIST,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),

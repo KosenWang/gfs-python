@@ -224,7 +224,7 @@ class MasterServerStub(object):
         self.GetFile = channel.unary_unary(
                 '/gfs.MasterServer/GetFile',
                 request_serializer=gfs__pb2.String.SerializeToString,
-                response_deserializer=gfs__pb2.StringList.FromString,
+                response_deserializer=gfs__pb2.ChunkList.FromString,
                 )
         self.DeleteFile = channel.unary_unary(
                 '/gfs.MasterServer/DeleteFile',
@@ -310,7 +310,7 @@ def add_MasterServerServicer_to_server(servicer, server):
             'GetFile': grpc.unary_unary_rpc_method_handler(
                     servicer.GetFile,
                     request_deserializer=gfs__pb2.String.FromString,
-                    response_serializer=gfs__pb2.StringList.SerializeToString,
+                    response_serializer=gfs__pb2.ChunkList.SerializeToString,
             ),
             'DeleteFile': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteFile,
@@ -390,7 +390,7 @@ class MasterServer(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/gfs.MasterServer/GetFile',
             gfs__pb2.String.SerializeToString,
-            gfs__pb2.StringList.FromString,
+            gfs__pb2.ChunkList.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

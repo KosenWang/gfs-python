@@ -58,9 +58,9 @@ class ChunkServer(pb2_grpc.ChunkServerServicer):
             print("---------------------------------------------------------")
             print()
             self.add_file_to_master(filename, chunks)
-            return pb2.String(str=str({filename: chunks}))
+            return pb2.String(str=filename)
         else:
-            return pb2.String(str="Add file failed. Try again!")
+            return pb2.String(str=f"Add {filename} failed. Try again!")
         
 
     def Copy(self, request, context):

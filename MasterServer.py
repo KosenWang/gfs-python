@@ -69,7 +69,11 @@ class MasterServer(pb2_grpc.MasterServerServicer):
     def GetFile(self, request, context):
         filename = request.str
         chunks = self.name_space.get(filename, [])
-        return pb2.StringList(strs=chunks)
+        chunk_map = {}
+        for cid in chunks:
+            peers = self.get_location(cid)
+            chunk_map[cid] = pb2.StringList(strs=peers)
+        return pb2.ChunkList(map=chunk_map)
 
 
     def DeleteFile(self, request, context):
