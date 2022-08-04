@@ -8,7 +8,7 @@ There are totally 3 tables in master-server. The first table called peer_table w
 ### Chunk Server
 Chunk-server is where the data is stored. There is one list called datastore in each chunk-server which stores all the chunk's ID in this server. Also, the data flow will only happen between client and each chunk-server.
 
-## Funcionality
+## Functionality
 ### Add File
 When client wants to add one file to the system, first it will request the master-server to get the candidate peers' ip address. It will choose one randomly as the primary chunk-server(in GFS thesis it should be the closest one to the client's ip address) and others as secondary chunk-server. Client connects with primary chunk-server and upload data to it. For simplifying prototype, the whole data will be divided into 2 chunks rather than fixed chunk size of 64 MB as in GFS. Then each chunk will have a unique hash value based on the content as chunk ID. The primary chunk-server will backup each chunk into each secondary chunk-server. When secondary chunk-server get the cid and data, it will calculate first the data's hash is equal to cid. Only when yes it will write the chunk in local datastore. When each chunk-server write successfully, the primary chunk-server will send the file name and chunk array to master-server to update name_space.
 
