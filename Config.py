@@ -1,0 +1,2 @@
+MASTER_ADDRESS = 'localhost:8080'
+CHUNK_SIZE = 6

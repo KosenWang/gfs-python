@@ -25,10 +25,15 @@ class ChunkServerStub(object):
                 request_serializer=gfs__pb2.ChunkId.SerializeToString,
                 response_deserializer=gfs__pb2.Bytes.FromString,
                 )
-        self.Copy = channel.unary_unary(
-                '/gfs.ChunkServer/Copy',
+        self.FirstCommit = channel.unary_unary(
+                '/gfs.ChunkServer/FirstCommit',
                 request_serializer=gfs__pb2.CopyRequest.SerializeToString,
                 response_deserializer=gfs__pb2.Bool.FromString,
+                )
+        self.SecondCommit = channel.unary_unary(
+                '/gfs.ChunkServer/SecondCommit',
+                request_serializer=gfs__pb2.ConfirmRequest.SerializeToString,
+                response_deserializer=gfs__pb2.Empty.FromString,
                 )
         self.Delete = channel.unary_unary(
                 '/gfs.ChunkServer/Delete',
@@ -58,7 +63,13 @@ class ChunkServerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Copy(self, request, context):
+    def FirstCommit(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SecondCommit(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -89,10 +100,15 @@ def add_ChunkServerServicer_to_server(servicer, server):
                     request_deserializer=gfs__pb2.ChunkId.FromString,
                     response_serializer=gfs__pb2.Bytes.SerializeToString,
             ),
-            'Copy': grpc.unary_unary_rpc_method_handler(
-                    servicer.Copy,
+            'FirstCommit': grpc.unary_unary_rpc_method_handler(
+                    servicer.FirstCommit,
                     request_deserializer=gfs__pb2.CopyRequest.FromString,
                     response_serializer=gfs__pb2.Bool.SerializeToString,
+            ),
+            'SecondCommit': grpc.unary_unary_rpc_method_handler(
+                    servicer.SecondCommit,
+                    request_deserializer=gfs__pb2.ConfirmRequest.FromString,
+                    response_serializer=gfs__pb2.Empty.SerializeToString,
             ),
             'Delete': grpc.unary_unary_rpc_method_handler(
                     servicer.Delete,
@@ -150,7 +166,7 @@ class ChunkServer(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Copy(request,
+    def FirstCommit(request,
             target,
             options=(),
             channel_credentials=None,
@@ -160,9 +176,26 @@ class ChunkServer(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/gfs.ChunkServer/Copy',
+        return grpc.experimental.unary_unary(request, target, '/gfs.ChunkServer/FirstCommit',
             gfs__pb2.CopyRequest.SerializeToString,
             gfs__pb2.Bool.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SecondCommit(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/gfs.ChunkServer/SecondCommit',
+            gfs__pb2.ConfirmRequest.SerializeToString,
+            gfs__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -229,16 +262,11 @@ class MasterServerStub(object):
         self.DeleteFile = channel.unary_unary(
                 '/gfs.MasterServer/DeleteFile',
                 request_serializer=gfs__pb2.String.SerializeToString,
-                response_deserializer=gfs__pb2.Empty.FromString,
+                response_deserializer=gfs__pb2.String.FromString,
                 )
         self.GetPeers = channel.unary_unary(
                 '/gfs.MasterServer/GetPeers',
-                request_serializer=gfs__pb2.Empty.SerializeToString,
-                response_deserializer=gfs__pb2.StringList.FromString,
-                )
-        self.GetLocation = channel.unary_unary(
-                '/gfs.MasterServer/GetLocation',
-                request_serializer=gfs__pb2.String.SerializeToString,
+                request_serializer=gfs__pb2.Number.SerializeToString,
                 response_deserializer=gfs__pb2.StringList.FromString,
                 )
         self.NameSpace = channel.unary_unary(
@@ -282,12 +310,6 @@ class MasterServerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetLocation(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def NameSpace(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -315,16 +337,11 @@ def add_MasterServerServicer_to_server(servicer, server):
             'DeleteFile': grpc.unary_unary_rpc_method_handler(
                     servicer.DeleteFile,
                     request_deserializer=gfs__pb2.String.FromString,
-                    response_serializer=gfs__pb2.Empty.SerializeToString,
+                    response_serializer=gfs__pb2.String.SerializeToString,
             ),
             'GetPeers': grpc.unary_unary_rpc_method_handler(
                     servicer.GetPeers,
-                    request_deserializer=gfs__pb2.Empty.FromString,
-                    response_serializer=gfs__pb2.StringList.SerializeToString,
-            ),
-            'GetLocation': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetLocation,
-                    request_deserializer=gfs__pb2.String.FromString,
+                    request_deserializer=gfs__pb2.Number.FromString,
                     response_serializer=gfs__pb2.StringList.SerializeToString,
             ),
             'NameSpace': grpc.unary_unary_rpc_method_handler(
@@ -407,7 +424,7 @@ class MasterServer(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/gfs.MasterServer/DeleteFile',
             gfs__pb2.String.SerializeToString,
-            gfs__pb2.Empty.FromString,
+            gfs__pb2.String.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -423,24 +440,7 @@ class MasterServer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/gfs.MasterServer/GetPeers',
-            gfs__pb2.Empty.SerializeToString,
-            gfs__pb2.StringList.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetLocation(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/gfs.MasterServer/GetLocation',
-            gfs__pb2.String.SerializeToString,
+            gfs__pb2.Number.SerializeToString,
             gfs__pb2.StringList.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
