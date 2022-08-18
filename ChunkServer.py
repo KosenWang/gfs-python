@@ -54,15 +54,13 @@ class ChunkServer(pb2_grpc.ChunkServerServicer):
             # is block empty
             if not block:
                 break
-            block = bytes(block).ljust(chunk_size, b'\x00')
+            block = bytes(block).ljust(chunk_size, b'\x01')
             tmp.append(block)
             data = data[chunk_size:]
         
         n = len(tmp) # number of origin blocks
         blocks = zfec.Encoder(n, n + k).encode(tmp)
-        file.set_filename(name)
-        file.set_cft(k)
-        uuid = file.set_uuid()
+        
         chunk = Chunk()
         # first commit
         for i in range(n+k):
@@ -71,7 +69,11 @@ class ChunkServer(pb2_grpc.ChunkServerServicer):
             # whether backup successfully
             consist &= chunk.backup(cid, blocks[i], peers[i])
         
+        
         # second commit
+        file.set_filename(name)
+        file.set_cft(k)
+        uuid = file.set_uuid()
         chunks = file.get_chunks()
         msg = ""
         if consist:

@@ -54,7 +54,7 @@ def read_file(uuid:str):
             blocks = zfec.Decoder(n, m).decode(tmp, index)
         # combine data
         for block in blocks:
-            data += block.rstrip(chr(0).encode())
+            data += block.rstrip(b'\x01')
         # write data    
         with open(os.path.join(path, uuid), 'wb') as f:
             f.write(data)
@@ -92,7 +92,7 @@ def _get_peers(num:int):
 
 if __name__ == "__main__":
     filename = "test.txt"
-    uuid = "97d170e1550eee4afc0af065b78cda302a97674c"
+    uuid = "f4fd33e24bdb265b9c90479a92fcb2e0e26b7b52"
     add_file(filename, 1)
     read_file(uuid)
     delete_file(uuid)
