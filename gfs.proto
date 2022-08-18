@@ -54,10 +54,13 @@ message NameRequest {
   string name = 1;
   string uuid = 2;
   repeated string list = 3;
+  int32 cft = 4;
 }
 
 message ChunkList {
   map<string, StringList> map = 1;
+  repeated string chunks = 2;
+  int32 cft = 3;
 }
  
 message StringList {

@@ -35,8 +35,8 @@ class Chunk():
     def add_location(self, new_address:str):
         self.location.add(new_address)
 
-    def get_location(self):
-        return self.location
+    def get_location(self) -> list: 
+        return list(self.location)
 
     def get_cid(self):
         return self.cid
@@ -45,7 +45,8 @@ class Chunk():
         h = hashlib.sha1()
         h.update(block)
         self.cid = h.hexdigest()
-
+        return self.cid
+        
     def __str__(self) -> str:
         return "cid: %s, location: %s" %(self.cid, self.location)
 
@@ -55,23 +56,28 @@ class File():
         self.filename = ""
         self.uuid = ""
         self.chunks = []
+        self.cft = 0 # Crash Fault Tolerance
         self.ttl = time.time()
 
-    def __str__(self) -> str:
-        return "file: %s, uuid: %s, chunks: %s" %(self.filename, self.uuid, self.chunks)
-
-    def __call__(self, filename:str, uuid:str, chunks:list) -> None:
+    def __call__(self, filename:str, uuid:str, chunks:list, k:int) -> None:
         self.filename = filename
         self.uuid = uuid
         self.chunks = chunks
+        self.cft = k
 
     def set_filename(self, filename:str):
         self.filename = filename
+    
+    def set_cft(self, k:int):
+        self.cft = k
 
-    def set_uuid(self, data:bytes):
-        # need to be hash of chunks
+    def get_cft(self):
+        return self.cft
+
+    def set_uuid(self):
+        tmp = str(self.chunks)
         h = hashlib.sha1()
-        h.update(data)
+        h.update(tmp.encode('utf-8'))
         self.uuid = h.hexdigest()
         return self.uuid
     
@@ -87,4 +93,7 @@ class File():
     def add_to_master(self, master_address:str):
         with grpc.insecure_channel(master_address) as channel:
             stub = pb2_grpc.MasterServerStub(channel)
-            stub.NameSpace(pb2.NameRequest(name=self.filename, uuid=self.uuid, list=self.chunks))
+            stub.NameSpace(pb2.NameRequest(name=self.filename, uuid=self.uuid, list=self.chunks, cft=self.cft))
+    
+    def __str__(self) -> str:
+        return "file: %s, uuid: %s, chunks: %s, cft: %s" %(self.filename, self.uuid, self.chunks, self.cft)

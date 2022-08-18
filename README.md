@@ -18,6 +18,9 @@ When client wants to read a file in system, first it will ask the master-server 
 ### Delete File
 When client wants to delete a file in system, it only needs to send the file name to the master-server. Master will check all belonging chunks and where they are stored. It will ask each peer to delete the local chunk and update the name_space and chunk_table.
 
+## Current Config
+chunk_size = 128 kB
+
 ## Example
 Clone git repository:
 
@@ -29,9 +32,9 @@ Open folder:
 
 Run master-server:
 
-`python MasterServer.py 8080`
+`python MasterServer.py`
 
-Open other 3 terminals and run 3 chunk-servers：
+Open other 4 terminals and run 3 chunk-servers：
 
 `python ChunkServer.py 8081 peer1`
 
@@ -39,13 +42,14 @@ Open other 3 terminals and run 3 chunk-servers：
 
 `python ChunkServer.py 8083 peer3`
 
+`python ChunkServer.py 8084 peer4`
+
 Open another terminal and run client:
 
 `python Client.py`
 
-Then the log in each terminal will show detailed process of each operation.
+Then the log in each terminal will show detailed process of each operation. You can change the chunk size in Config.py. But make sure the number of chunk servers is >= (file_size//chunk_size + 1) + k + 1
 
 ## TODO
 1. heartbeat mechanism
-2. erasure coding backup algorithm
-3. two phase commit for consistency
+2. multithreading

@@ -46,9 +46,7 @@ class ChunkServer(pb2_grpc.ChunkServerServicer):
         k = request.k
 
         consist = True
-        file = File()
-        file.set_filename(name)
-        uuid = file.set_uuid(data) # TODO: for now, but will changed in the furture
+        file = File() 
         tmp = [] # store data of each block, wait for ec alogrithm
         # divide origin data
         while True:
@@ -56,18 +54,19 @@ class ChunkServer(pb2_grpc.ChunkServerServicer):
             # is block empty
             if not block:
                 break
-            block = bytes(block).ljust(6, b'\x00')
+            block = bytes(block).ljust(chunk_size, b'\x00')
             tmp.append(block)
             data = data[chunk_size:]
         
         n = len(tmp) # number of origin blocks
         blocks = zfec.Encoder(n, n + k).encode(tmp)
-        
+        file.set_filename(name)
+        file.set_cft(k)
+        uuid = file.set_uuid()
         chunk = Chunk()
         # first commit
         for i in range(n+k):
-            chunk.set_cid(blocks[i])
-            cid = chunk.get_cid()
+            cid = chunk.set_cid(blocks[i])
             file.add_chunk(cid)
             # whether backup successfully
             consist &= chunk.backup(cid, blocks[i], peers[i])

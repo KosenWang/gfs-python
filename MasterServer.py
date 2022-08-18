@@ -59,8 +59,10 @@ class MasterServer(pb2_grpc.MasterServerServicer):
         filename = request.name
         uuid = request.uuid
         chunks = request.list
+        k = request.cft
+
         new_file = File()
-        new_file(filename, uuid, chunks)
+        new_file(filename, uuid, chunks, k)
         self.name_space[uuid] = new_file
         print(localtime, f"Added {filename} to name space.")
         print()
@@ -72,13 +74,16 @@ class MasterServer(pb2_grpc.MasterServerServicer):
 
 
     def GetFile(self, request, context):
-        filename = request.str
-        chunks = self.name_space.get(filename, [])
+        uuid = request.str
+
+        file = self.name_space.get(uuid, File())
+        chunks = file.get_chunks()
         chunk_map = {}
         for cid in chunks:
-            peers = self.get_location(cid)
-            chunk_map[cid] = pb2.StringList(strs=peers)
-        return pb2.ChunkList(map=chunk_map)
+            chunk = self.chunk_table.get(cid, Chunk())
+            location = chunk.get_location()
+            chunk_map[cid] = pb2.StringList(strs=location)
+        return pb2.ChunkList(map=chunk_map, chunks=chunks, cft=file.get_cft())
 
 
     def DeleteFile(self, request, context):
