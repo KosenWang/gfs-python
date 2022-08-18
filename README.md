@@ -34,7 +34,7 @@ Run master-server:
 
 `python MasterServer.py`
 
-Open other 4 terminals and run 3 chunk-servers：
+Open other 4 terminals and run 4 chunk-servers：
 
 `python ChunkServer.py 8081 peer1`
 
