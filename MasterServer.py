@@ -11,6 +11,9 @@ from concurrent import futures
 localtime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 address = conf.MASTER_ADDRESS
 
+chunk = Chunk()
+file = File()
+
 class MasterServer(pb2_grpc.MasterServerServicer):
 
     def __init__(self) -> None:
@@ -40,34 +43,30 @@ class MasterServer(pb2_grpc.MasterServerServicer):
                 chunks = reponse.strs
             for cid in chunks:
                 if cid in self.chunk_table:
-                    chunk = self.chunk_table[cid]
+                    chunk.set_location = self.chunk_table[cid]
                     chunk.add_location(peer)
+                    self.chunk_table[cid] = chunk.get_location()
                 else:
-                    chunk = Chunk()
-                    chunk(cid, peer)
-                    self.chunk_table[cid] = chunk
+                    self.chunk_table[cid] = {peer}
         print(localtime, "Checked current chunk table.")
         print()
         print("--------------------Current Chunk Table--------------------")
-        self.print_chunk_table()
+        print(self.chunk_table)
         print("-----------------------------------------------------------")
         print()
         return pb2.Empty()
 
 
     def NameSpace(self, request, context):
-        filename = request.name
         uuid = request.uuid
         chunks = request.list
         k = request.cft
 
-        new_file = File()
-        new_file(filename, uuid, chunks, k)
-        self.name_space[uuid] = new_file
-        print(localtime, f"Added {filename} to name space.")
+        self.name_space[uuid] = (chunks, k)
+        print(localtime, f"Added file {uuid} to name space.")
         print()
         print("--------------------Current Name Space--------------------")
-        self.print_name_space()
+        print(self.name_space)
         print("----------------------------------------------------------")
         print()
         return pb2.Empty()
@@ -76,22 +75,19 @@ class MasterServer(pb2_grpc.MasterServerServicer):
     def GetFile(self, request, context):
         uuid = request.str
 
-        file = self.name_space.get(uuid, File())
-        chunks = file.get_chunks()
+        chunks, cft = self.name_space.get(uuid, tuple())
         chunk_map = {}
         for cid in chunks:
-            chunk = self.chunk_table.get(cid, Chunk())
-            location = chunk.get_location()
+            location = list(self.chunk_table.get(cid, set()))
             chunk_map[cid] = pb2.StringList(strs=location)
-        return pb2.ChunkList(map=chunk_map, chunks=chunks, cft=file.get_cft())
+        return pb2.ChunkList(map=chunk_map, chunks=chunks, cft=cft)
 
 
     def DeleteFile(self, request, context):
         uuid = request.str
-        file = self.name_space.get(uuid, File())
-        for cid in file.get_chunks():
-            chunk = self.chunk_table.get(cid, Chunk())
-            peers = chunk.get_location()
+        chunks, cft = self.name_space.get(uuid, tuple())
+        for cid in chunks:
+            peers = self.chunk_table.get(cid, set())
             for peer in peers:
                 with grpc.insecure_channel(peer) as channel:
                     stub = pb2_grpc.ChunkServerStub(channel)
@@ -102,11 +98,11 @@ class MasterServer(pb2_grpc.MasterServerServicer):
         print(localtime, f"Deleted file {uuid} from system.")
         print()
         print("--------------------Current Name Space--------------------")
-        self.print_name_space()
+        print(self.name_space)
         print("----------------------------------------------------------")
         print()
         print("-------------------Current Chunk Table--------------------")
-        self.print_chunk_table()
+        print(self.chunk_table)
         print("----------------------------------------------------------")
         print()
 
@@ -125,14 +121,6 @@ class MasterServer(pb2_grpc.MasterServerServicer):
                 break
         return pb2.StringList(strs=peers)
 
-
-    def print_chunk_table(self):
-        for cid in self.chunk_table:
-            print(self.chunk_table[cid])
-
-    def print_name_space(self):
-        for uuid in self.name_space:
-            print(self.name_space[uuid])
 
 
 

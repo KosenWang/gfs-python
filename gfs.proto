@@ -4,7 +4,6 @@ package gfs;
 
 // The chunk server
 service ChunkServer {
-  rpc Add (AddRequest) returns (String);
   rpc Read (ChunkId) returns (Bytes);
   rpc FirstCommit (CopyRequest) returns (Bool);
   rpc SecondCommit (ConfirmRequest) returns (Empty);
@@ -51,10 +50,9 @@ message RegisterRequest {
 }
 
 message NameRequest {
-  string name = 1;
-  string uuid = 2;
-  repeated string list = 3;
-  int32 cft = 4;
+  string uuid = 1;
+  repeated string list = 2;
+  int32 cft = 3;
 }
 
 message ChunkList {

@@ -15,11 +15,6 @@ class ChunkServerStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Add = channel.unary_unary(
-                '/gfs.ChunkServer/Add',
-                request_serializer=gfs__pb2.AddRequest.SerializeToString,
-                response_deserializer=gfs__pb2.String.FromString,
-                )
         self.Read = channel.unary_unary(
                 '/gfs.ChunkServer/Read',
                 request_serializer=gfs__pb2.ChunkId.SerializeToString,
@@ -50,12 +45,6 @@ class ChunkServerStub(object):
 class ChunkServerServicer(object):
     """The chunk server
     """
-
-    def Add(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
 
     def Read(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -90,11 +79,6 @@ class ChunkServerServicer(object):
 
 def add_ChunkServerServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Add': grpc.unary_unary_rpc_method_handler(
-                    servicer.Add,
-                    request_deserializer=gfs__pb2.AddRequest.FromString,
-                    response_serializer=gfs__pb2.String.SerializeToString,
-            ),
             'Read': grpc.unary_unary_rpc_method_handler(
                     servicer.Read,
                     request_deserializer=gfs__pb2.ChunkId.FromString,
@@ -130,23 +114,6 @@ def add_ChunkServerServicer_to_server(servicer, server):
 class ChunkServer(object):
     """The chunk server
     """
-
-    @staticmethod
-    def Add(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/gfs.ChunkServer/Add',
-            gfs__pb2.AddRequest.SerializeToString,
-            gfs__pb2.String.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def Read(request,

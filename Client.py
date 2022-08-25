@@ -1,7 +1,8 @@
 import os
 import zfec
 import grpc
-from Entity import Chunk
+
+from Entity import Chunk, File
 import gfs_pb2 as pb2
 import gfs_pb2_grpc as pb2_grpc
 import Config as conf
@@ -9,24 +10,55 @@ import Config as conf
 master_address = conf.MASTER_ADDRESS
 chunk_size = conf.CHUNK_SIZE
 path = os.path.join('data', 'client')
+file = File() 
+chunk = Chunk()
 
-def add_file(filename:str, k:int):
-    dir = os.path.join(path, filename)
-    with open(dir, 'rb') as f:
-        data = f.read()
+def add_file(name:str, k:int):
+    data = file.read(name, path)
     size = len(data)
-    peer_number = (size//chunk_size + 1) + k + 1
-    peers = _get_peers(peer_number)
-    with grpc.insecure_channel(peers[0]) as channel:
-        stub = pb2_grpc.ChunkServerStub(channel)
-        response = stub.Add(pb2.AddRequest(name=filename, data=data, peers=peers[1:], k=k))
-    print(response.str)
+    peer_number = (size//chunk_size + 1) + k
+    peers = file.get_peers(peer_number)
+    consist = True
+    tmp = [] # store data of each block, wait for ec alogrithm
+    # divide origin data
+    while True:
+        block = data[0: chunk_size]
+        # is block empty
+        if not block:
+            break
+        block = bytes(block).ljust(chunk_size, b'\x01')
+        tmp.append(block)
+        data = data[chunk_size:]
+    
+    n = len(tmp) # number of origin blocks
+    blocks = zfec.Encoder(n, n + k).encode(tmp)
+
+    # first commit
+    for i in range(n+k):
+        cid = chunk.set_cid(blocks[i])
+        file.add_chunk(cid)
+        # whether backup successfully
+        consist &= chunk.backup(cid, blocks[i], peers[i])    
+    
+    # second commit
+    file.set_cft(k)
+    uuid = file.set_uuid()
+    chunks = file.get_chunks()
+    if consist:
+        for i in range(n+k):
+            chunk.confirm(chunks[i], True, peers[i])
+        file.add_to_master()
+        msg = f"Added {name} {uuid}"
+    else:
+        for i in range(n+k):
+            chunk.confirm(chunks[i], False, peers[i])
+        msg = f"Add {name} failed. Try again!"
+    print(msg)
 
 
 def read_file(uuid:str):
-    chunks, mp, k = _get_file(uuid)
+    chunks, mp, k = file.get_file(uuid)
     data = bytes()
-    chunk = Chunk()
     tmp = []
     # get data of each block
     for cid in chunks:
@@ -56,8 +88,7 @@ def read_file(uuid:str):
         for block in blocks:
             data += block.rstrip(b'\x01')
         # write data    
-        with open(os.path.join(path, uuid), 'wb') as f:
-            f.write(data)
+        file.write(uuid, path, data)
     except Exception:
         print(f'more than {k} chunks are not consistent.')
     
@@ -68,24 +99,6 @@ def delete_file(uuid:str):
         stub.CheckChunks(pb2.Empty())
         response = stub.DeleteFile(pb2.String(str=uuid))
     print(response.str)
-
-
-def _get_file(uuid:str):
-    # get the chunk arrays connected with the filename
-    with grpc.insecure_channel(master_address) as channel:
-        stub = pb2_grpc.MasterServerStub(channel)
-        stub.CheckChunks(pb2.Empty())
-        response = stub.GetFile(pb2.String(str=uuid))
-    return (response.chunks, response.map, response.cft)
-
-
-def _get_peers(num:int):
-    # get the ip address of peers which are ready for add file and backup
-    with grpc.insecure_channel(master_address) as channel:
-        stub = pb2_grpc.MasterServerStub(channel)
-        stub.CheckChunks(pb2.Empty())
-        response = stub.GetPeers(pb2.Number(num=num))
-    return response.strs
 
 
 

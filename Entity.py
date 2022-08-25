@@ -5,21 +5,20 @@ import hashlib
 import grpc
 import gfs_pb2 as pb2
 import gfs_pb2_grpc as pb2_grpc
+import Config as conf
 
+master_address = conf.MASTER_ADDRESS
 
 class Chunk():
     def __init__(self) -> None:
         self.cid = ""
         self.location = set()
         self.ttl = time.time()
-
-    def __call__(self, cid:str, address:str) -> None:
-        self.cid = cid
-        self.location = {address}
     
-    def save(self, data:bytes, dir:str) -> None:
-        with open(os.path.join(dir, self.cid), 'wb') as f:
-            f.write(data)
+    def save(self, cid:str, path:str, data:bytes) -> None:
+        dir = os.path.join(path, cid)
+        with open(dir, 'wb') as f:
+            data = f.write(data)
 
     def backup(self, cid:str, data:bytes, address:str):
         with grpc.insecure_channel(address) as channel:
@@ -35,8 +34,11 @@ class Chunk():
     def add_location(self, new_address:str):
         self.location.add(new_address)
 
-    def get_location(self) -> list: 
-        return list(self.location)
+    def get_location(self) -> set: 
+        return self.location
+
+    def set_location(self, location:set):
+        self.location = location
 
     def get_cid(self):
         return self.cid
@@ -53,21 +55,11 @@ class Chunk():
 
 class File():
     def __init__(self) -> None:
-        self.filename = ""
         self.uuid = ""
         self.chunks = []
         self.cft = 0 # Crash Fault Tolerance
         self.ttl = time.time()
 
-    def __call__(self, filename:str, uuid:str, chunks:list, k:int) -> None:
-        self.filename = filename
-        self.uuid = uuid
-        self.chunks = chunks
-        self.cft = k
-
-    def set_filename(self, filename:str):
-        self.filename = filename
-    
     def set_cft(self, k:int):
         self.cft = k
 
@@ -90,10 +82,37 @@ class File():
     def add_chunk(self, cid:str):
         self.chunks.append(cid)
 
-    def add_to_master(self, master_address:str):
+    def get_file(self, uuid:str):
+        # get the chunk arrays connected with the filename
         with grpc.insecure_channel(master_address) as channel:
             stub = pb2_grpc.MasterServerStub(channel)
-            stub.NameSpace(pb2.NameRequest(name=self.filename, uuid=self.uuid, list=self.chunks, cft=self.cft))
+            stub.CheckChunks(pb2.Empty())
+            response = stub.GetFile(pb2.String(str=uuid))
+        return (response.chunks, response.map, response.cft)
+
+    def get_peers(self, num:int):
+        # get the ip address of peers which are ready for add file and backup
+        with grpc.insecure_channel(master_address) as channel:
+            stub = pb2_grpc.MasterServerStub(channel)
+            stub.CheckChunks(pb2.Empty())
+            response = stub.GetPeers(pb2.Number(num=num))
+        return response.strs
+
+    def read(self, filename:str, path:str):
+        dir = os.path.join(path, filename)
+        with open(dir, 'rb') as f:
+            data = f.read()
+        return data
+
+    def write(self, uuid:str, path:str, data:bytes):
+        dir = os.path.join(path, uuid)
+        with open(dir, 'wb') as f:
+            data = f.write(data)
+
+    def add_to_master(self):
+        with grpc.insecure_channel(master_address) as channel:
+            stub = pb2_grpc.MasterServerStub(channel)
+            stub.NameSpace(pb2.NameRequest(uuid=self.uuid, list=self.chunks, cft=self.cft))
     
     def __str__(self) -> str:
         return "file: %s, uuid: %s, chunks: %s, cft: %s" %(self.filename, self.uuid, self.chunks, self.cft)
