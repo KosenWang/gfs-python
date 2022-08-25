@@ -48,7 +48,7 @@ Open another terminal and run client:
 
 `python Client.py`
 
-Then the log in each terminal will show detailed process of each operation. You can change the chunk size in Config.py. But make sure the number of chunk servers is >= (file_size//chunk_size + 1) + k + 1
+Then the log in each terminal will show detailed process of each operation. You can change the chunk size in Config.py. But make sure the number of chunk servers is >= (file_size//chunk_size + 1) + k
 
 ## TODO
 1. heartbeat mechanism

@@ -115,4 +115,4 @@ class File():
             stub.NameSpace(pb2.NameRequest(uuid=self.uuid, list=self.chunks, cft=self.cft))
     
     def __str__(self) -> str:
-        return "file: %s, uuid: %s, chunks: %s, cft: %s" %(self.filename, self.uuid, self.chunks, self.cft)
+        return "uuid: %s, chunks: %s, cft: %s" %(self.uuid, self.chunks, self.cft)
